@@ -1,0 +1,31 @@
+////////////////////////////////////////////////////////////
+// ShaderSystem.hpp
+//
+// Created by Thomas Kilsby on 06/04/2014.
+// Copyright (c) 2014 Thomas Kilsby. All rights reserved.
+////////////////////////////////////////////////////////////
+#pragma once
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <entityx/entityx.h>
+#include "Core/Logger.hpp"
+
+
+////////////////////////////////////////////////////////////
+/// \brief System for updating shader components.
+////////////////////////////////////////////////////////////
+class ShaderSystem
+: public entityx::System<ShaderSystem>
+{
+public:
+                ShaderSystem();
+                ~ShaderSystem();
+    
+void            update(entityx::EntityManager& entities,
+                entityx::EventManager& events, float dt) override;
+
+private:
+    Arc::Logger mLog;
+};

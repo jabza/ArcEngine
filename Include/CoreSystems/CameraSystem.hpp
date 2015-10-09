@@ -1,0 +1,82 @@
+////////////////////////////////////////////////////////////
+// CameraSystem.hpp
+//
+// Created by Thomas Kilsby on 06/04/2014.
+// Copyright (c) 2014 Thomas Kilsby. All rights reserved.
+////////////////////////////////////////////////////////////
+#pragma once
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <entityx/entityx.h>
+#include <list>
+
+#include "Core/Logger.hpp"
+#include "Core/Context.hpp"
+
+#include "CoreComponents/CCameraTarget.hpp"
+
+
+////////////////////////////////////////////////////////////
+/// \brief System for focusing the State's sf::View to
+/// CCameraTarget components.
+////////////////////////////////////////////////////////////
+class CameraSystem
+: public entityx::System<CameraSystem>
+, public entityx::Receiver<CameraSystem>
+{
+public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor.
+    /// \param context The State's Context.
+    ////////////////////////////////////////////////////////////
+                                CameraSystem(Arc::Context context);
+                                
+    ////////////////////////////////////////////////////////////
+    /// \brief Default destructor.
+    ////////////////////////////////////////////////////////////
+                                ~CameraSystem();
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Configures any event listeners.
+    /// \param events The EventManager.
+    ////////////////////////////////////////////////////////////
+    void                        configure(entityx::EventManager& events) override;
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Updates the System.
+    /// \param entities The EntityManager.
+    /// \param events The EventManager.
+    /// \param dt The delta time.
+    ////////////////////////////////////////////////////////////
+    void                        update(entityx::EntityManager& entities,
+                                entityx::EventManager& events, float dt) override;
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Event handler for new CCameraTarget component 
+    /// assigned.
+    /// \param event The Event object.
+    ////////////////////////////////////////////////////////////
+    void                        receive(const entityx::ComponentAddedEvent<CCameraTarget>& event);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Event handler for removed CCameraTarget component.
+    /// \param event The Event object.
+    ////////////////////////////////////////////////////////////
+    void                        receive(const entityx::ComponentRemovedEvent<CCameraTarget>& event);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Event handler for entity destroyed.
+    /// \param event The Event object.
+    ////////////////////////////////////////////////////////////
+    void                        receive(const entityx::EntityDestroyedEvent& event);
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data.
+    ////////////////////////////////////////////////////////////
+    Arc::Logger                 mLog;
+    Arc::Context                mContext;
+    std::list<entityx::Entity>  mTargets;
+};

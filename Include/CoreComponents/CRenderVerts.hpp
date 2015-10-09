@@ -1,0 +1,27 @@
+////////////////////////////////////////////////////////////
+// CRenderVerts.hpp
+//
+// Created by Thomas Kilsby on 06/04/2014.
+// Copyright (c) 2014 Thomas Kilsby. All rights reserved.
+////////////////////////////////////////////////////////////
+#pragma once
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <entityx/entityx.h>
+#include <SFML/Graphics.hpp>
+
+////////////////////////////////////////////////////////////
+/// \brief Holds a renderable sf::VertexArray.
+////////////////////////////////////////////////////////////
+struct CRenderVerts 
+: entityx::Component<CRenderVerts>
+{
+    CRenderVerts(sf::VertexArray vertexArray = sf::VertexArray(), sf::String textureID = "")
+    : vertexArray(vertexArray), textureID(textureID){}
+
+    sf::VertexArray vertexArray;
+    sf::String      textureID;
+};
+

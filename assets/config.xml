@@ -1,0 +1,6 @@
+<!-- Game Config -->
+
+<CONFIG id="Default" title="ArcEngine" width="1440" height="900" fullscreen="false" lang="en"/>
+<CONFIG id="DefaultFS" title="ArcEngineFS" width="1920" height="1200" fullscreen="true" lang="en"/>
+<CONFIG id="Small" title="ArcEngineSmall" width="1024" height="768" fullscreen="false" lang="en"/>
+<CONFIG id="Retina" title="ArcEngineRetina" width="1440" height="900" fullscreen="true" lang="en"/>
