@@ -13,27 +13,23 @@
 #include "Core/Engine.hpp"
 
 LoadState::LoadState(Arc::Context context)
-: State(State::ID::LOAD, context)
+: State(context)
 {
-}
+	mContext.resources->parse("fonts/fonts.xml");
+	mContext.resources->parse("textures/textures.xml");
+	mContext.resources->parse("sounds/sounds.xml");
+	mContext.resources->parse("music/music.xml");
 
-
-void LoadState::onCreate()
-{
-    mContext.resources->parse("fonts/fonts.xml");
-    mContext.resources->parse("textures/textures.xml");
-    mContext.resources->parse("sounds/sounds.xml");
-    mContext.resources->parse("music/music.xml");
-
-    switch(mContext.engine->getActiveConfig().getLanguage())
-    {
-		case Arc::GameConfig::Language::English : mContext.resources->parse("strings/en.xml"); break;
-        default                            : mContext.resources->parse("strings/en.xml"); break;
-    }
+	switch(mContext.engine->getActiveConfig().getLanguage())
+	{
+		case Arc::GameConfig::Language::English: mContext.resources->parse("strings/en.xml"); break;
+		default: mContext.resources->parse("strings/en.xml"); break;
+	}
 }
 
 
 void LoadState::onUpdate(const sf::Time& delta)
 {
-    mContext.engine->pushState(new MainMenuState(mContext), true);
+	mContext.engine->popState();
+	mContext.engine->pushState<MainMenuState>();
 }

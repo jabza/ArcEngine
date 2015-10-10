@@ -20,6 +20,5 @@ public:
             LoadState(Arc::Context context);
 
 private:
-    void    onCreate() override;
     void    onUpdate(const sf::Time& delta) override;
 };

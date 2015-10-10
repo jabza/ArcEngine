@@ -14,6 +14,7 @@ using namespace Arc;
 
 Engine::Engine()
 : mPopStates(0)
+, mRequestQuit(false)
 , mLog("Engine")
 {
     mLog.l("Initialising...");
@@ -45,7 +46,9 @@ void Engine::run()
         updateState();
         renderState();
 
-        if(mPushStates.size() > 0 || mPopStates > 0)
+		if(mRequestQuit)
+			mStates.clear();
+        else if(mPushStates.size() > 0 || mPopStates > 0)
             changeState();
     }
 
@@ -55,14 +58,7 @@ void Engine::run()
 
 void Engine::quit()
 {
-    mLog.l("Quitting...");
-    mPopStates = mStates.size();
-}
-
-
-void Engine::pushState(State* state, bool destroyCurrent)
-{
-    mPushStates.emplace_back(State::Ptr(state), destroyCurrent);
+	mRequestQuit = true;
 }
 
 
@@ -92,14 +88,13 @@ void Engine::changeState()
     // Pop States.
     for(unsigned int i = 0; i < mPopStates; i++)
     {
-        if(!mStates.empty())
-        {
-            getActiveState().destroy();
-            mStates.pop_front();
+		if(!mStates.empty())
+		{
+			mStates.pop_front();
 
-            if(!mStates.empty())
-                getActiveState().resume();
-        }
+			if(!mStates.empty())
+				getActiveState().resume();
+		}
     }
     mPopStates = 0;
 
@@ -107,18 +102,9 @@ void Engine::changeState()
     for(auto& stateIntent : mPushStates)
     {
         if(!mStates.empty())
-        {
-            if(stateIntent.second)
-            {
-                getActiveState().destroy();
-                mStates.pop_front();
-            }
-            else
-                getActiveState().pause();
-        }
+            getActiveState().pause();
 
-        mStates.push_front(std::move(stateIntent.first));
-        getActiveState().create();
+		mStates.push_front(stateIntent(getContext()));
     }
     mPushStates.clear();
 }

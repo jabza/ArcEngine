@@ -22,24 +22,32 @@
 #include "CoreSystems/CameraSystem.hpp"
 
 
-State::State(State::ID state, Arc::Context context)
-: mLog("State "+std::to_string(state))
-, mStateID(state)
-, mContext(context)
+State::State(Arc::Context context)
+: mContext(context)
 , mCamera(mContext.window->getDefaultView())
+, mLog("State")
 {
-}
+	//Setup dependencies.
 
+	//Setup core systems.
+	getSystemManager().add<NodeSystem>();
+	getSystemManager().add<RenderSystem>(mContext);
+	getSystemManager().add<ShaderSystem>();
+	getSystemManager().add<SoundSystem>(mContext);
+	getSystemManager().add<CollisionSystem>(mContext);
+	getSystemManager().add<AnimationSystem>(mContext);
+	getSystemManager().add<CameraSystem>(mContext);
 
-State::~State()
-{
-   onDestroy();
-}
+	//Configure.
+	getSystemManager().configure();
 
-
-const State::ID State::getStateID() const
-{
-    return mStateID;
+	//Setup layers.
+	for(int l = 0; l < State::Layers::TOTAL; l++)
+	{
+		entityx::Entity layer = getEntityManager().create();
+		layer.assign<CNode>();
+		mLayers.push_back(layer);
+	}
 }
 
 
@@ -81,40 +89,6 @@ void State::addToLayer(int layer, entityx::Entity entity)
 {
     if(layer >= 0 && layer < State::Layers::TOTAL)
         mLayers[layer].component<CNode>()->addChild(entity);
-}
-
-
-void State::create()
-{
-    //Setup dependencies.
-
-    //Setup core systems.
-    getSystemManager().add<NodeSystem>();
-    getSystemManager().add<RenderSystem>(mContext);
-    getSystemManager().add<ShaderSystem>();
-    getSystemManager().add<SoundSystem>(mContext);
-    getSystemManager().add<CollisionSystem>(mContext);
-    getSystemManager().add<AnimationSystem>(mContext);
-    getSystemManager().add<CameraSystem>(mContext);
-
-    //Configure.
-    getSystemManager().configure();
-    
-    //Setup layers.
-    for(int l = 0; l < State::Layers::TOTAL; l++)
-    {
-        entityx::Entity layer = getEntityManager().create();
-        layer.assign<CNode>();
-        mLayers.push_back(layer);
-    }
-    
-    onCreate();
-}
-
-
-void State::destroy()
-{
-    onDestroy();
 }
 
 

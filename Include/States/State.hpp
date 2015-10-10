@@ -18,26 +18,15 @@
 using namespace entityx;
 
 ////////////////////////////////////////////////////////////
-/// \brief The base State class, provides soft interfaces for
-/// dervied States to implement custom creation, updating and
-/// destruction. Holds the root Entity, through which the 
-/// scene graph is updated. Provides the current game's Context.
+/// \brief The base State class, provides interfaces for
+/// dervied States to implement custom updating and
+/// rendering. Holds the game's Context.
 ////////////////////////////////////////////////////////////
 class State : public sf::NonCopyable
 {
 public:
-    typedef std::unique_ptr<State> Ptr;
+	typedef std::unique_ptr<State> Ptr;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief State IDs.
-    ////////////////////////////////////////////////////////////
-    enum ID
-    {
-        INVALID,
-        LOAD,
-        MAIN_MENU,
-    };
-    
     ////////////////////////////////////////////////////////////
     /// \brief Entity node layers.
     ////////////////////////////////////////////////////////////
@@ -55,14 +44,8 @@ public:
     /// \brief Default Constructor.
     /// \param context The game's Context.
     ////////////////////////////////////////////////////////////
-                        State(State::ID, Arc::Context context);
-                        ~State();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Gets the State's ID.
-    /// \return The State ID.
-    ////////////////////////////////////////////////////////////
-    const State::ID     getStateID() const;
+                        State(Arc::Context context);
+						virtual ~State() {};
     
     ////////////////////////////////////////////////////////////
     /// \brief Gets the State's sf::View camera.
@@ -103,18 +86,6 @@ public:
     void                addToLayer(int layer, entityx::Entity entity);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Creates the State, setting up the Scene and GUI layer Entitys.
-    /// Then calls the derived, 'onCreate' virtual function.
-    ////////////////////////////////////////////////////////////
-    void                create();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Called before the state is destroyed.
-    /// Then calls the derived, 'onDestroy' virtual function.
-    ////////////////////////////////////////////////////////////
-    void                destroy();
-    
-    ////////////////////////////////////////////////////////////
     /// \brief Performs any necessary operations before the State
     /// pauses.
     ////////////////////////////////////////////////////////////
@@ -148,9 +119,6 @@ protected:
     ////////////////////////////////////////////////////////////
     // Member data.
     ////////////////////////////////////////////////////////////
-    Arc::Logger         mLog;
-    const State::ID     mStateID;
-    
     Arc::Context        mContext;
     sf::View            mCamera;
 
@@ -159,13 +127,9 @@ protected:
     std::vector<
     entityx::Entity>    mLayers;
 
-private:
-    ////////////////////////////////////////////////////////////
-    /// \brief Optional creation function implemented by
-    /// dervived States.
-    ////////////////////////////////////////////////////////////
-    virtual void        onCreate(){};
+	Arc::Logger         mLog;
 
+private:
     ////////////////////////////////////////////////////////////
     /// \brief Optional event function implemented by
     /// dervived States.
@@ -187,21 +151,15 @@ private:
     ////////////////////////////////////////////////////////////
     virtual void        onDraw(sf::RenderWindow& window){};
 
+	////////////////////////////////////////////////////////////
+	/// \brief Optional pause function implemented by
+	/// dervived States.
+	////////////////////////////////////////////////////////////
+	virtual void        onPause(){};
+
     ////////////////////////////////////////////////////////////
     /// \brief Optional resume function implemented by
     /// dervived States.
     ////////////////////////////////////////////////////////////
-    virtual void        onResume(){};
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Optional pause function implemented by
-    /// dervived States.
-    ////////////////////////////////////////////////////////////
-    virtual void        onPause(){};
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Optional destroy function implemented by
-    /// dervived States.
-    ////////////////////////////////////////////////////////////
-    virtual void        onDestroy(){};
+	virtual void        onResume(){};
 };

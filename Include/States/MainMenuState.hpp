@@ -20,8 +20,7 @@ public:
                         MainMenuState(Arc::Context context);
 
 private:
-    void                onCreate() override;
+	void				onHandleEvent(const sf::Event& event) override;
     void                onUpdate(const sf::Time& delta) override;
-
-    entityx::Entity     e;
+	void				onDraw(sf::RenderWindow& window) override;
 };

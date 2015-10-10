@@ -49,11 +49,15 @@ namespace Arc
         void                    quit();
 
         ////////////////////////////////////////////////////////////
-        /// \brief Pushes new State onto the stack.
-        /// \param state The new State to push.
-        /// \param destroyCurrent Destroy the current State.
+        /// \brief Creates intent for State to be pushed onto the stack.
+        /// \param State constructor arguments.
         ////////////////////////////////////////////////////////////
-        void                    pushState(State* state, bool destroyCurrent = false);
+		template <class T, class... Args> 
+		void					pushState(Args&&... args)
+		{
+			static_assert(std::is_base_of<State, T>::value, "Type parameter must derive from State.");
+			mPushStates.emplace_back([args...](Context c){ return State::Ptr(new T(c, args...)); });
+		};
 
         ////////////////////////////////////////////////////////////
         /// \brief Pops the top State.
@@ -101,11 +105,10 @@ namespace Arc
         ////////////////////////////////////////////////////////////
         // Member data.
         ////////////////////////////////////////////////////////////
-        std::list<State::Ptr>   mStates;
+		typedef std::function<State::Ptr(Context)> Intent;
 
-        std::list<std::pair
-        <State::Ptr, bool>>     mPushStates;
-
+        std::list<State::Ptr>	mStates;
+        std::list<Intent>		mPushStates;
         unsigned int            mPopStates;
 
         sf::RenderWindow        mWindow;
@@ -114,6 +117,8 @@ namespace Arc
         GameConfig              mActiveConfig;
         ResourceManager         mResourceManager;
         InputManager            mInputManager;
+
+		bool					mRequestQuit;
 
         Arc::Logger             mLog;
     };

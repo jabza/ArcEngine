@@ -16,10 +16,11 @@ int main()
     Arc::Logger log("MainThread");
     log.l("Instantiating Engine...");
 
+
     try
     {
         Arc::Engine game;
-        game.pushState(new LoadState(game.getContext()));
+        game.pushState<LoadState>();
         game.run();
     }
     catch(std::exception& e)
