@@ -19,12 +19,13 @@ I created this project to provide a 'hopefully' minimal core feature set for cre
 1. Clone the repo.
 2. Configure your project's build system to link to EntityX and SFML 2.3.
 3. Create (or modify) a game state, which inherits the State class.
-4. Add your game logic to the State callbacks: onCreate, onUpdate, onDraw and others.
+4. Add your game logic to the State callbacks: onHandleEvent, onUpdate, onDraw and others.
 
 ## Example
 The following snippet shows the creation of two entities. Both parent 'e' and child 'c' will be rendered in the scene.
 ```
-void MainMenuState::onCreate()
+MainMenuState::MainMenuState(Arc::Context context)
+: State(context)
 {
 	auto e = getEntityManager().create();
 	e.assign<CNode>(100, 100);
@@ -44,7 +45,7 @@ Create the engine and push your first state! 'main.cpp'
 try
 {
     Arc::Engine game;
-    game.pushState(new MainMenuState(game.getContext()));
+    game.pushState<MainMenuState>();
     game.run();
 }
 catch(std::exception& e)
